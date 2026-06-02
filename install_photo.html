@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Install profile photo · India Road Crash Intelligence</title>
+<style>
+ body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: #0a0e1a; color: #ecf0ff; min-height: 100vh; margin: 0; padding: 32px 20px; display: flex; align-items: center; justify-content: center; }
+ .card { max-width: 540px; width: 100%; background: #131830; border: 1px solid #2a2f5a; border-radius: 20px; padding: 32px; box-shadow: 0 24px 60px rgba(0,0,0,0.4); }
+ h1 { font-size: 26px; margin: 0 0 8px; background: linear-gradient(135deg, #ff4757, #ff8f47); -webkit-background-clip: text; background-clip: text; color: transparent; font-weight: 800; }
+ p { color: #c6cce5; line-height: 1.6; font-size: 14px; }
+ .drop { margin-top: 22px; padding: 36px; border: 2px dashed #3a4280; border-radius: 16px; text-align: center; cursor: pointer; transition: all .2s; background: #1a2042; }
+ .drop:hover, .drop.over { border-color: #ff4757; background: #2a1842; }
+ .drop p { margin: 8px 0; }
+ .drop strong { color: #ff8f47; }
+ .preview { display: flex; flex-direction: column; align-items: center; gap: 16px; margin-top: 22px; }
+ .preview img { width: 200px; height: 200px; border-radius: 50%; object-fit: cover; border: 4px solid #ff4757; box-shadow: 0 12px 40px rgba(255,71,87,0.45); }
+ .btn { background: linear-gradient(135deg, #ff4757, #ff8f47); color: white; border: 0; padding: 14px 28px; border-radius: 12px; font-weight: 700; font-size: 15px; cursor: pointer; box-shadow: 0 8px 24px rgba(255,71,87,0.4); transition: transform .15s; }
+ .btn:hover { transform: translateY(-2px); }
+ .btn[disabled] { opacity: 0.4; cursor: not-allowed; }
+ .step { margin-top: 24px; padding: 14px 16px; background: #1a2042; border-left: 3px solid #ffb547; border-radius: 6px; font-size: 13px; color: #c6cce5; }
+ .step b { color: #ffb547; }
+ .step code { background: #07091a; padding: 2px 6px; border-radius: 4px; font-size: 12px; color: #ff8f47; }
+ input[type=file] { display: none; }
+</style>
+</head>
+<body>
+<div class="card">
+ <h1>Install your profile photo</h1>
+ <p>Drop your photo below, then save the downloaded file. The dashboard will automatically use it on the Developer tab and in the top-right pill.</p>
+
+ <label for="file" class="drop" id="drop">
+ <p style="font-size: 32px; margin: 0 0 4px">📸</p>
+ <p>Drag &amp; drop your photo here</p>
+ <p style="font-size: 11px; color: #8a93c3">or <strong>click to browse</strong> · JPG / PNG / HEIC</p>
+ <input type="file" id="file" accept="image/*" />
+ </label>
+
+ <div class="preview" id="preview" style="display:none">
+ <img id="img" alt="Preview" />
+ <button class="btn" id="download">⬇ Download as karthikeyan.jpg</button>
+ </div>
+
+ <div class="step">
+ <p><b>Step 2 · Save the downloaded file to:</b></p>
+ <p><code>D:\Files\Road Accidents Website\Road Crashes Dashboard\assets\karthikeyan.jpg</code></p>
+ <p style="margin-top:10px"><b>Step 3 ·</b> Reopen the dashboard. Your photo will appear automatically.</p>
+ </div>
+</div>
+
+<script>
+const drop = document.getElementById("drop");
+const file = document.getElementById("file");
+const preview = document.getElementById("preview");
+const img = document.getElementById("img");
+const dl = document.getElementById("download");
+let blob = null;
+
+["dragover","dragenter"].forEach(e => drop.addEventListener(e, ev => { ev.preventDefault(); drop.classList.add("over"); }));
+["dragleave","drop"].forEach(e => drop.addEventListener(e, ev => { ev.preventDefault(); drop.classList.remove("over"); }));
+drop.addEventListener("drop", ev => {
+ ev.preventDefault();
+ const f = ev.dataTransfer.files[0];
+ if (f) handle(f);
+});
+file.addEventListener("change", ev => {
+ const f = ev.target.files[0];
+ if (f) handle(f);
+});
+
+function handle(f) {
+ const reader = new FileReader();
+ reader.onload = e => {
+ // Re-encode to JPEG so the output filename is always .jpg
+ const tmp = new Image();
+ tmp.onload = () => {
+ const canvas = document.createElement("canvas");
+ // Cap longest side to 600px for a reasonable file size
+ const max = 600;
+ let w = tmp.width, h = tmp.height;
+ if (w > h) { if (w > max) { h = h * max / w; w = max; } }
+ else { if (h > max) { w = w * max / h; h = max; } }
+ canvas.width = w; canvas.height = h;
+ const ctx = canvas.getContext("2d");
+ ctx.drawImage(tmp, 0, 0, w, h);
+ canvas.toBlob(b => {
+ blob = b;
+ img.src = URL.createObjectURL(b);
+ preview.style.display = "flex";
+ }, "image/jpeg", 0.92);
+ };
+ tmp.src = e.target.result;
+ };
+ reader.readAsDataURL(f);
+}
+
+dl.addEventListener("click", () => {
+ if (!blob) return;
+ const a = document.createElement("a");
+ a.href = URL.createObjectURL(blob);
+ a.download = "karthikeyan.jpg";
+ a.click();
+});
+</script>
+</body>
+</html>
