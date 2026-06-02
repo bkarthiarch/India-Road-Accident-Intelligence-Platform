@@ -147,6 +147,7 @@ nav.tabs { max-width: 1440px; margin: 0 auto; padding: 8px 32px 0; display: flex
 .tab:hover { color: var(--text); background: rgba(255,71,87,0.06); }
 .tab.active { color: var(--accent); border-bottom-color: var(--accent); font-weight: 800; text-shadow: 0 0 12px rgba(255,71,87,0.4); }
 .tab.active::after { content: ""; position: absolute; left: 50%; bottom: -3px; transform: translateX(-50%); width: 24px; height: 3px; background: var(--accent); box-shadow: 0 0 12px var(--accent); border-radius: 2px; }
+.tab[data-gated="true"] { opacity: 0.85; }
 
 /* ====== Layout ====== */
 main { max-width: 1440px; margin: 0 auto; padding: 0 28px 40px; }
@@ -1132,166 +1133,204 @@ footer ul { padding-left: 18px; }
 }
 .gate-badge span { color: var(--accent-3); }
 
-/* ====== GATE MODAL v2 — OTP ====== */
+/* ====== GATE MODAL v6 ====== */
 #gate-overlay {
   position: fixed; inset: 0; z-index: 9999;
-  background: rgba(7,9,26,0.93);
-  backdrop-filter: blur(20px) saturate(160%);
-  -webkit-backdrop-filter: blur(20px) saturate(160%);
-  display: flex; align-items: center; justify-content: center;
-  padding: 20px;
+  background: rgba(7,9,26,0.88);
+  backdrop-filter: blur(16px);
+  display: flex; align-items: center; justify-content: center; padding: 20px;
 }
 #gate-overlay.hidden { display: none; }
-
-@keyframes gateSlideUp {
-  from { opacity: 0; transform: translateY(36px) scale(0.97); }
-  to   { opacity: 1; transform: translateY(0) scale(1); }
+@keyframes gateUp {
+  from { opacity:0; transform:translateY(28px) scale(.97); }
+  to   { opacity:1; transform:translateY(0) scale(1); }
 }
 #gate-card {
-  background: var(--panel);
-  border: 1px solid var(--border-strong);
-  border-radius: 22px;
-  width: 100%; max-width: 470px;
-  padding: 36px 38px 30px;
-  box-shadow: 0 28px 80px rgba(0,0,0,0.75), 0 0 0 1px rgba(255,255,255,0.05) inset;
-  animation: gateSlideUp .45s cubic-bezier(.22,.68,0,1.2);
-  position: relative; overflow: hidden;
-  max-height: 94vh; overflow-y: auto;
+  background: #fff;
+  border-radius: 16px;
+  width: 100%; max-width: 420px;
+  padding: 0;
+  box-shadow: 0 24px 60px rgba(0,0,0,0.5);
+  animation: gateUp .4s cubic-bezier(.22,.68,0,1.2);
+  overflow: hidden;
+  position: relative;
 }
+/* top accent bar */
 #gate-card::before {
-  content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px;
-  background: var(--grad-hero);
+  content:''; display:block; height:4px;
+  background: linear-gradient(90deg,#ff4757,#ff8f47,#ffb547);
 }
+
+/* logo row */
+.gate-logo-row {
+  display: flex; align-items: center; gap: 12px;
+  padding: 20px 24px 0;
+}
+.gate-logo-icon {
+  width: 40px; height: 40px; border-radius: 10px;
+  background: linear-gradient(135deg,#ff4757,#ff8f47);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 18px; flex-shrink: 0;
+  box-shadow: 0 4px 12px rgba(255,71,87,.3);
+}
+.gate-logo-text { font-size: 13px; font-weight: 700; color: #1a1a1a; line-height: 1.3; }
+.gate-logo-text span { display:block; font-size: 11px; font-weight: 500; color: #888; margin-top: 1px; }
 
 /* step bar */
-.gate-steps {
-  display: flex; align-items: flex-start; gap: 0; margin-bottom: 24px;
+.gate-step-bar {
+  display: flex; align-items: center; padding: 16px 24px 0; gap: 0;
 }
-.gate-step-col { display: flex; flex-direction: column; align-items: center; flex: none; }
-.gate-step-dot {
-  width: 30px; height: 30px; border-radius: 50%;
-  border: 2px solid var(--border);
+.gate-step-col { display: flex; flex-direction: column; align-items: center; }
+.gate-step-num {
+  width: 28px; height: 28px; border-radius: 50%;
+  border: 2px solid #e0e0e0;
   display: flex; align-items: center; justify-content: center;
-  font-size: 12px; font-weight: 800; color: var(--muted);
-  transition: all .35s;
+  font-size: 12px; font-weight: 800; color: #bbb;
+  transition: all .3s;
 }
-.gate-step-dot.active { background: var(--accent); border-color: var(--accent); color:#fff; box-shadow: 0 0 14px rgba(255,71,87,.45); }
-.gate-step-dot.done   { background: var(--good);   border-color: var(--good);   color:#fff; }
-.gate-step-label { font-size: 10px; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing:.06em; margin-top:5px; white-space:nowrap; }
-.gate-step-line-wrap { flex: 1; padding-top: 15px; }
-.gate-step-line {
-  height: 2px; background: var(--border); border-radius: 2px; transition: background .35s;
-}
-.gate-step-line.done { background: var(--good); }
+.gate-step-num.active { background: #ff4757; border-color: #ff4757; color: #fff; box-shadow: 0 0 0 3px rgba(255,71,87,.2); }
+.gate-step-num.done   { background: #43a047; border-color: #43a047; color: #fff; }
+.gate-step-lbl { font-size: 10px; font-weight: 700; color: #bbb; text-transform: uppercase; letter-spacing: .06em; margin-top: 4px; }
+.gate-step-lbl.active { color: #ff4757; }
+.gate-step-line { flex: 1; height: 2px; background: #e8e8e8; margin: 0 4px; margin-bottom: 18px; }
+.gate-step-line.done { background: #43a047; }
 
-/* logo */
-.gate-logo-row { display: flex; align-items: center; gap: 12px; margin-bottom: 18px; }
-.gate-logo-icon {
-  width: 40px; height: 40px; border-radius: 11px;
-  background: var(--grad-hero);
-  display: flex; align-items: center; justify-content: center;
-  font-size: 20px; flex-shrink: 0;
-  box-shadow: 0 4px 14px rgba(255,71,87,.35);
-}
-.gate-logo-text { font-size: 13px; font-weight: 700; color: var(--text); line-height: 1.3; }
-.gate-logo-text span { display: block; font-size: 11px; font-weight: 500; color: var(--muted); margin-top: 1px; }
-
-.gate-headline { font-size: 20px; font-weight: 800; color: var(--text); margin: 0 0 6px; line-height: 1.25; }
-.gate-sub      { font-size: 13px; color: var(--muted); margin: 0 0 20px; line-height: 1.55; }
-
-.gate-badge-row { display: flex; gap: 7px; flex-wrap: wrap; margin-bottom: 18px; }
-.gate-badge {
-  background: var(--panel-2); border: 1px solid var(--border); border-radius: 6px;
-  padding: 4px 10px; font-size: 11px; font-weight: 600; color: var(--muted);
-  display: flex; align-items: center; gap: 5px;
-}
-.gate-badge span { color: var(--accent-3); }
+/* headline */
+.gate-headline { font-size: 18px; font-weight: 800; color: #1a1a1a; margin: 0; padding: 14px 24px 2px; }
+.gate-sub { font-size: 12px; color: #888; padding: 0 24px 12px; margin: 0; line-height: 1.5; }
 
 /* fields */
-.gate-form { display: flex; flex-direction: column; gap: 13px; }
-.gate-field { display: flex; flex-direction: column; gap: 5px; }
-.gate-field label { font-size: 11px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); }
-.gate-field input,
+.gate-fields { padding: 4px 24px 0; display: flex; flex-direction: column; gap: 0; }
+.gate-field { border-bottom: 1px solid #f0f0f0; padding: 12px 0; }
+.gate-field:last-child { border-bottom: none; }
+.gate-field input {
+  background: transparent; border: none;
+  color: #1a1a1a; font-family: inherit; font-size: 14px;
+  padding: 0; outline: none; width: 100%;
+}
+.gate-field input::placeholder { color: #bbb; }
+.gate-field input.error { color: #e53935; }
+.gate-phone-row { display: flex; align-items: center; gap: 6px; }
+.gate-phone-lbl { font-size: 11px; color: #999; margin-bottom: 6px; }
 .gate-cc {
-  background: var(--bg-2); border: 1.5px solid var(--border);
-  border-radius: 10px; color: var(--text);
-  font-family: inherit; font-size: 14px;
-  padding: 11px 14px; outline: none;
-  transition: border-color .2s, box-shadow .2s; width: 100%;
+  background: transparent; border: none; border-right: 1px solid #e8e8e8;
+  color: #555; font-family: inherit; font-size: 13px;
+  outline: none; cursor: pointer; padding-right: 10px; margin-right: 6px; flex-shrink: 0;
 }
-.gate-field input::placeholder { color: var(--muted); opacity: .6; }
-.gate-field input:focus, .gate-cc:focus {
-  border-color: var(--accent-2); box-shadow: 0 0 0 3px rgba(84,104,255,.18);
-}
-.gate-field input.error { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(255,71,87,.15); }
-
-/* phone row */
-.gate-phone-row { display: flex; gap: 8px; }
-.gate-cc { width: 100px; flex-shrink: 0; cursor: pointer; padding: 11px 8px; }
 .gate-phone-row input { flex: 1; }
 
-/* OTP boxes */
-.gate-otp-hint { font-size: 13px; color: var(--muted); text-align: center; margin: 0 0 18px; }
-.gate-otp-hint strong { color: var(--text); }
-.gate-otp-group { display: flex; gap: 9px; justify-content: center; }
-.gate-otp-box {
-  width: 46px; height: 56px;
-  background: var(--bg-2); border: 2px solid var(--border);
-  border-radius: 12px; color: var(--text);
-  font-family: inherit; font-size: 24px; font-weight: 800;
-  text-align: center; outline: none;
-  transition: border-color .2s, box-shadow .2s, background .2s;
-  caret-color: var(--accent);
-}
-.gate-otp-box:focus  { border-color: var(--accent-2); box-shadow: 0 0 0 3px rgba(84,104,255,.22); background: var(--panel-2); }
-.gate-otp-box.filled { border-color: var(--accent-2); background: var(--panel-2); }
-.gate-otp-box.error  { border-color: var(--accent);   box-shadow: 0 0 0 3px rgba(255,71,87,.15); }
-
-/* resend */
-.gate-resend { text-align: center; font-size: 12px; color: var(--muted); margin-top: 6px; }
-.gate-resend button {
-  background: none; border: none; color: var(--accent-2);
-  font-family: inherit; font-size: 12px; cursor: pointer; padding: 0;
-  text-decoration: underline; transition: color .2s;
-}
-.gate-resend button:hover { color: var(--accent); }
-.gate-resend button:disabled { color: var(--muted); cursor: not-allowed; text-decoration: none; }
-
-/* error / success */
-.gate-err-box { font-size: 12px; color: var(--accent); text-align: center; display: none; margin-top: -4px; }
+/* error */
+.gate-err-box { font-size: 12px; color: #e53935; display: none; padding: 6px 24px 0; }
 .gate-err-box.on { display: block; }
-.gate-suc-box { font-size: 12px; color: var(--good); text-align: center; display: none; }
+.gate-suc-box { font-size: 13px; color: #43a047; display: none; text-align: center; padding: 8px 24px; }
 .gate-suc-box.on { display: block; }
 
 /* button */
+.gate-btn-wrap { padding: 16px 24px 20px; }
 .gate-btn {
-  margin-top: 4px; background: var(--grad-hero); border: none; border-radius: 12px;
-  color: #fff; font-family: inherit; font-size: 15px; font-weight: 700;
+  background: linear-gradient(90deg,#ff4757,#ff7043);
+  border: none; border-radius: 50px; color: #fff;
+  font-family: inherit; font-size: 15px; font-weight: 700;
   padding: 14px 24px; cursor: pointer; width: 100%;
   box-shadow: 0 6px 20px rgba(255,71,87,.35);
-  transition: opacity .2s, transform .15s, box-shadow .2s;
-  letter-spacing: .02em; display: flex; align-items: center; justify-content: center; gap: 8px;
+  transition: opacity .2s, transform .15s;
+  display: flex; align-items: center; justify-content: center; gap: 8px;
+  letter-spacing: .02em;
 }
-.gate-btn:hover   { opacity:.92; transform:translateY(-1px); box-shadow:0 8px 28px rgba(255,71,87,.45); }
-.gate-btn:active  { transform:translateY(0); }
-.gate-btn:disabled{ opacity:.5; cursor:not-allowed; transform:none; }
+.gate-btn:hover   { opacity: .92; transform: translateY(-1px); }
+.gate-btn:active  { transform: translateY(0); }
+.gate-btn:disabled{ background: #e0e0e0; color: #aaa; box-shadow: none; cursor: not-allowed; transform: none; }
 .gate-btn-spinner {
-  width:16px; height:16px; border-radius:50%;
-  border:2px solid rgba(255,255,255,.3); border-top-color:#fff;
-  animation:spin .7s linear infinite; display:none;
+  width: 16px; height: 16px; border-radius: 50%;
+  border: 2px solid rgba(255,255,255,.4); border-top-color: #fff;
+  animation: gspin .7s linear infinite; display: none;
 }
-.gate-btn.loading .gate-btn-spinner { display:block; }
-.gate-btn.loading .gate-btn-label { opacity:.7; }
-@keyframes spin { to { transform:rotate(360deg); } }
+.gate-btn.loading .gate-btn-spinner { display: block; }
+.gate-btn.loading .gate-btn-label   { opacity: .75; }
+@keyframes gspin { to { transform: rotate(360deg); } }
 
 /* privacy */
-.gate-privacy { margin-top:16px; text-align:center; font-size:11px; color:var(--muted); line-height:1.5; }
-.gate-privacy a { color:var(--accent-2); }
+.gate-privacy { text-align: center; font-size: 11px; color: #ccc; padding: 0 24px 14px; }
+.gate-privacy a { color: #aaa; }
 
-/* step 2 hidden by default */
+/* OTP */
+.gate-otp-hint { font-size: 13px; color: #666; text-align: center; padding: 16px 24px 4px; margin: 0; }
+.gate-otp-hint strong { color: #1a1a1a; }
+.gate-otp-group { display: flex; gap: 8px; justify-content: center; padding: 12px 24px; }
+.gate-otp-box {
+  width: 46px; height: 54px;
+  background: #f7f7f7; border: 1.5px solid #e0e0e0; border-radius: 10px;
+  color: #1a1a1a; font-family: inherit; font-size: 22px; font-weight: 800;
+  text-align: center; outline: none; transition: border-color .2s, background .2s;
+}
+.gate-otp-box:focus  { border-color: #ff4757; background: #fff; }
+.gate-otp-box.filled { border-color: #ff4757; background: #fff; }
+.gate-otp-box.error  { border-color: #e53935; background: #fff5f5; }
+.gate-resend { text-align: center; font-size: 12px; color: #aaa; padding: 0 24px 8px; }
+.gate-resend button {
+  background: none; border: none; color: #ff4757; font-family: inherit;
+  font-size: 12px; cursor: pointer; padding: 0; text-decoration: underline;
+}
+.gate-resend button:disabled { color: #ccc; cursor: not-allowed; text-decoration: none; }
+.gate-back-link {
+  display: block; text-align: center; font-size: 12px; color: #ccc;
+  cursor: pointer; padding-bottom: 4px; text-decoration: underline;
+  background: none; border: none; font-family: inherit; width: 100%;
+}
+
 #gate-step2 { display: none; }
 #gate-step2.active { display: block; }
-#recaptcha-container { margin-top: 4px; }
+#recaptcha-container { display: none; }
+
+/* ====== PROFILE POPUP (post-login) ====== */
+#profile-overlay {
+  position:fixed; inset:0; z-index:8888;
+  background:rgba(7,9,26,0.7);
+  backdrop-filter:blur(8px);
+  display:flex; align-items:center; justify-content:center; padding:20px;
+}
+#profile-overlay.hidden { display:none; }
+#profile-card {
+  background:var(--panel); border:1px solid var(--border-strong);
+  border-radius:20px; width:100%; max-width:440px;
+  padding:32px 34px 28px;
+  box-shadow:0 20px 60px rgba(0,0,0,0.6);
+  animation:gateSlideUp .4s cubic-bezier(.22,.68,0,1.2);
+  position:relative;
+}
+#profile-card::before {
+  content:''; position:absolute; top:0; left:0; right:0; height:3px;
+  background:var(--grad-blue); border-radius:20px 20px 0 0;
+}
+.profile-headline { font-size:18px; font-weight:800; color:var(--text); margin:0 0 4px; }
+.profile-sub { font-size:13px; color:var(--muted); margin:0 0 20px; line-height:1.5; }
+.profile-form { display:flex; flex-direction:column; gap:11px; }
+.profile-row { display:flex; gap:10px; }
+.profile-row .gate-field { flex:1; }
+.profile-field { display:flex; flex-direction:column; gap:5px; }
+.profile-field label { font-size:11px; font-weight:700; letter-spacing:.06em; text-transform:uppercase; color:var(--muted); }
+.profile-field input,
+.profile-field select {
+  background:var(--bg-2); border:1.5px solid var(--border); border-radius:10px;
+  color:var(--text); font-family:inherit; font-size:14px; padding:10px 13px;
+  outline:none; transition:border-color .2s,box-shadow .2s; width:100%;
+}
+.profile-field input::placeholder { color:var(--muted); opacity:.6; }
+.profile-field input:focus,.profile-field select:focus { border-color:var(--accent-2); box-shadow:0 0 0 3px rgba(84,104,255,.18); }
+.profile-actions { display:flex; gap:10px; margin-top:6px; }
+.profile-btn-skip {
+  flex:1; padding:12px; border-radius:12px; border:1.5px solid var(--border);
+  background:transparent; color:var(--muted); font-family:inherit; font-size:14px;
+  font-weight:600; cursor:pointer; transition:all .2s;
+}
+.profile-btn-skip:hover { border-color:var(--border-strong); color:var(--text); }
+.profile-btn-save {
+  flex:2; padding:12px; border-radius:12px; border:none;
+  background:var(--grad-blue); color:#fff; font-family:inherit; font-size:14px;
+  font-weight:700; cursor:pointer; box-shadow:0 4px 16px rgba(84,104,255,.35);
+  transition:opacity .2s,transform .15s;
+}
+.profile-btn-save:hover { opacity:.9; transform:translateY(-1px); }
 </style>
 <!-- Firebase SDK (for Phone OTP) -->
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
@@ -1299,112 +1338,176 @@ footer ul { padding-left: 18px; }
 </head>
 <body data-theme="dark">
 
-<!-- ====== GATED ACCESS OVERLAY — OTP FLOW ====== -->
-<div id="gate-overlay">
+<!-- ====== GATED ACCESS OVERLAY ====== -->
+<div id="gate-overlay" class="hidden">
   <div id="gate-card">
 
-    <div class="gate-logo-row">
-      <div class="gate-logo-icon">🛣️</div>
-      <div class="gate-logo-text">
-        India Road Accident Intelligence Platform
-        <span>MoRTH Official Data · 2019–2023</span>
-      </div>
-    </div>
-
-    <!-- Step progress bar -->
-    <div class="gate-steps">
-      <div class="gate-step-col">
-        <div class="gate-step-dot active" id="sdot1">1</div>
-        <div class="gate-step-label">Your Details</div>
-      </div>
-      <div class="gate-step-line-wrap"><div class="gate-step-line" id="sline"></div></div>
-      <div class="gate-step-col">
-        <div class="gate-step-dot" id="sdot2">2</div>
-        <div class="gate-step-label">Verify OTP</div>
-      </div>
-    </div>
-
-    <!-- ── STEP 1 : Details + phone ── -->
+    <!-- STEP 1 -->
     <div id="gate-step1">
-      <h2 class="gate-headline">Request Access to the Dashboard</h2>
-      <p class="gate-sub">Fill in your details. We'll send a one-time password to your mobile to verify your identity.</p>
-      <div class="gate-badge-row">
-        <div class="gate-badge"><span>📊</span> 5-Year Trends</div>
-        <div class="gate-badge"><span>🗺️</span> State &amp; City Analysis</div>
-        <div class="gate-badge"><span>🔒</span> Free Access</div>
+      <div class="gate-logo-row">
+        <div class="gate-logo-icon">🛣️</div>
+        <div class="gate-logo-text">
+          India Road Accident Intelligence Platform
+          <span>MoRTH Official Data · 2019–2023</span>
+        </div>
       </div>
-      <form class="gate-form" id="gate-form1" novalidate>
+      <div class="gate-step-bar">
+        <div class="gate-step-col">
+          <div class="gate-step-num active" id="sdot1">1</div>
+          <div class="gate-step-lbl active" id="slbl1">VERIFY</div>
+        </div>
+        <div class="gate-step-line" id="sline"></div>
+        <div class="gate-step-col">
+          <div class="gate-step-num" id="sdot2">2</div>
+          <div class="gate-step-lbl" id="slbl2">OTP</div>
+        </div>
+      </div>
+      <h2 class="gate-headline">Verify to Continue</h2>
+      <p class="gate-sub">Fill in your details — we’ll send an OTP to verify your phone.</p>
+
+      <div class="gate-fields">
         <div class="gate-field">
-          <label for="gate-name">Full Name *</label>
-          <input id="gate-name" type="text" placeholder="e.g. Priya Sharma" autocomplete="name" required />
+          <input id="gate-name" type="text" placeholder="Name" autocomplete="name" required />
         </div>
         <div class="gate-field">
-          <label for="gate-email">Email Address *</label>
-          <input id="gate-email" type="email" placeholder="e.g. priya@example.com" autocomplete="email" required />
+          <input id="gate-email" type="email" placeholder="Email Id" autocomplete="email" required />
         </div>
         <div class="gate-field">
-          <label for="gate-phone">Mobile Number *</label>
+          <div class="gate-phone-lbl">Phone Number</div>
           <div class="gate-phone-row">
             <select class="gate-cc" id="gate-cc">
-              <option value="+91">🇮🇳 +91</option>
-              <option value="+1">🇺🇸 +1</option>
-              <option value="+44">🇬🇧 +44</option>
-              <option value="+61">🇦🇺 +61</option>
-              <option value="+65">🇸🇬 +65</option>
-              <option value="+971">🇦🇪 +971</option>
-              <option value="+49">🇩🇪 +49</option>
-              <option value="+33">🇫🇷 +33</option>
+              <option value="+91">IND +91</option>
+              <option value="+1">USA +1</option>
+              <option value="+44">UK +44</option>
+              <option value="+61">AUS +61</option>
+              <option value="+65">SGP +65</option>
+              <option value="+971">UAE +971</option>
             </select>
-            <input id="gate-phone" type="tel" placeholder="9876543210" autocomplete="tel" required />
+            <input id="gate-phone" type="tel" placeholder="" autocomplete="tel" required />
           </div>
         </div>
         <div class="gate-field">
-          <label for="gate-org">Organisation / Institution *</label>
-          <input id="gate-org" type="text" placeholder="e.g. IIT Delhi, NITI Aayog, Transport Dept." autocomplete="organization" required />
+          <input id="gate-org" type="text" placeholder="Company Name" autocomplete="organization" />
         </div>
         <div class="gate-field">
-          <label for="gate-role">Your Role <em style="font-style:normal;opacity:.6">(optional)</em></label>
-          <input id="gate-role" type="text" placeholder="e.g. Researcher, Policy Analyst, Student" />
+          <input id="gate-city" type="text" placeholder="City" autocomplete="address-level2" />
         </div>
-        <div class="gate-err-box" id="gate-err1"></div>
-        <div id="recaptcha-container"></div>
-        <button type="submit" class="gate-btn" id="gate-submit1">
+      </div>
+
+      <div class="gate-err-box" id="gate-err1"></div>
+      <div id="recaptcha-container"></div>
+
+      <div class="gate-btn-wrap">
+        <button type="button" class="gate-btn" id="gate-submit1" onclick="submitStep1()">
           <span class="gate-btn-label">Send OTP →</span>
           <span class="gate-btn-spinner"></span>
         </button>
-      </form>
+      </div>
+      <p class="gate-privacy">🔐 Your data is stored only in your browser &middot; Built by <a href="https://www.linkedin.com/in/karthikeyan-baskar-a1ab99139" target="_blank">Karthikeyan Baskar</a></p>
     </div>
 
-    <!-- ── STEP 2 : OTP entry ── -->
+    <!-- STEP 2: OTP -->
     <div id="gate-step2">
-      <h2 class="gate-headline">Verify Your Number</h2>
-      <p class="gate-otp-hint">We sent a 6-digit OTP to <strong id="gate-phone-display"></strong></p>
-      <form class="gate-form" id="gate-form2" novalidate style="gap:18px">
-        <div class="gate-otp-group" id="gate-otp-group">
-          <input class="gate-otp-box" type="text" inputmode="numeric" maxlength="1" autocomplete="off" />
-          <input class="gate-otp-box" type="text" inputmode="numeric" maxlength="1" autocomplete="off" />
-          <input class="gate-otp-box" type="text" inputmode="numeric" maxlength="1" autocomplete="off" />
-          <input class="gate-otp-box" type="text" inputmode="numeric" maxlength="1" autocomplete="off" />
-          <input class="gate-otp-box" type="text" inputmode="numeric" maxlength="1" autocomplete="off" />
-          <input class="gate-otp-box" type="text" inputmode="numeric" maxlength="1" autocomplete="off" />
+      <div class="gate-logo-row">
+        <div class="gate-logo-icon">🛣️</div>
+        <div class="gate-logo-text">
+          India Road Accident Intelligence Platform
+          <span>MoRTH Official Data · 2019–2023</span>
         </div>
-        <div class="gate-err-box" id="gate-err2"></div>
-        <div class="gate-suc-box" id="gate-suc"></div>
-        <button type="submit" class="gate-btn" id="gate-submit2">
+      </div>
+      <div class="gate-step-bar">
+        <div class="gate-step-col">
+          <div class="gate-step-num done" id="sdot1b">&#10003;</div>
+          <div class="gate-step-lbl" id="slbl1b">VERIFY</div>
+        </div>
+        <div class="gate-step-line done"></div>
+        <div class="gate-step-col">
+          <div class="gate-step-num active" id="sdot2b">2</div>
+          <div class="gate-step-lbl active" id="slbl2b">OTP</div>
+        </div>
+      </div>
+      <h2 class="gate-headline">Enter OTP</h2>
+      <p class="gate-otp-hint">6-digit code sent to <strong id="gate-phone-display"></strong></p>
+      <div class="gate-otp-group">
+        <input class="gate-otp-box" type="text" inputmode="numeric" maxlength="1" autocomplete="off" />
+        <input class="gate-otp-box" type="text" inputmode="numeric" maxlength="1" autocomplete="off" />
+        <input class="gate-otp-box" type="text" inputmode="numeric" maxlength="1" autocomplete="off" />
+        <input class="gate-otp-box" type="text" inputmode="numeric" maxlength="1" autocomplete="off" />
+        <input class="gate-otp-box" type="text" inputmode="numeric" maxlength="1" autocomplete="off" />
+        <input class="gate-otp-box" type="text" inputmode="numeric" maxlength="1" autocomplete="off" />
+      </div>
+      <div class="gate-err-box" id="gate-err2"></div>
+      <div class="gate-suc-box" id="gate-suc"></div>
+      <div class="gate-resend">
+        Didn't receive it? <button id="gate-resend-btn" disabled>Resend (<span id="gate-resend-timer">30</span>s)</button>
+      </div>
+      <div class="gate-btn-wrap">
+        <button type="button" class="gate-btn" id="gate-submit2" onclick="submitStep2()">
           <span class="gate-btn-label">Verify &amp; Enter Dashboard →</span>
           <span class="gate-btn-spinner"></span>
         </button>
-      </form>
-      <div class="gate-resend">
-        Didn't receive it? <button id="gate-resend-btn" disabled>Resend OTP (<span id="gate-resend-timer">30</span>s)</button>
       </div>
-      <div style="text-align:center;margin-top:10px">
-        <button onclick="gateBackToStep1()" style="background:none;border:none;color:var(--muted);font-size:12px;cursor:pointer;font-family:inherit;text-decoration:underline">← Change number</button>
-      </div>
+      <button class="gate-back-link" onclick="gateBackToStep1()">&larr; Change number</button>
+      <p class="gate-privacy">🔐 Your data is stored only in your browser &middot; Built by <a href="https://www.linkedin.com/in/karthikeyan-baskar-a1ab99139" target="_blank">Karthikeyan Baskar</a></p>
     </div>
 
-    <p class="gate-privacy">🔐 Your details are stored only in your browser and never sent to any server.<br/>
-    Built by <a href="https://www.linkedin.com/in/karthikeyan-baskar-a1ab99139" target="_blank">Karthikeyan Baskar</a></p>
+  </div>
+</div>
+
+<!-- ====== PROFILE POPUP (post-login) ====== -->
+<div id="profile-overlay" class="hidden">
+  <div id="profile-card">
+    <h2 class="profile-headline">👋 One more thing…</h2>
+    <p class="profile-sub">Help us understand who uses this data. Takes 20 seconds — or skip for now.</p>
+    <form class="profile-form" id="profile-form">
+      <div class="profile-row">
+        <div class="gate-field">
+          <label for="pf-org">Organisation</label>
+          <input id="pf-org" type="text" placeholder="e.g. IIT Delhi, NHAI, NGO" />
+        </div>
+        <div class="gate-field">
+          <label for="pf-role">Your Role</label>
+          <input id="pf-role" type="text" placeholder="e.g. Researcher" />
+        </div>
+      </div>
+      <div class="profile-row">
+        <div class="gate-field">
+          <label for="pf-city">City</label>
+          <input id="pf-city" type="text" placeholder="e.g. Chennai" />
+        </div>
+        <div class="gate-field">
+          <label for="pf-sector">Sector</label>
+          <select id="pf-sector">
+            <option value="">Select…</option>
+            <option>Government</option>
+            <option>Academia / Research</option>
+            <option>NGO / Civil Society</option>
+            <option>Private Sector</option>
+            <option>Media / Journalism</option>
+            <option>Student</option>
+            <option>Other</option>
+          </select>
+        </div>
+      </div>
+      <div class="gate-field">
+        <label for="pf-interest">Interest Area</label>
+        <select id="pf-interest">
+          <option value="">Select…</option>
+          <option>Road Safety Policy</option>
+          <option>Urban Planning</option>
+          <option>Traffic Engineering</option>
+          <option>Public Health</option>
+          <option>Insurance / Risk</option>
+          <option>Academic Research</option>
+          <option>Journalism / Reporting</option>
+          <option>General Interest</option>
+        </select>
+      </div>
+      <div class="profile-actions">
+        <button type="button" class="profile-btn-skip" onclick="skipProfile()">Skip for now</button>
+        <button type="submit" class="profile-btn-save">Save &amp; Continue →</button>
+      </div>
+    </form>
   </div>
 </div>
 
@@ -4550,279 +4653,300 @@ function renderCityDetailedReport(name) {
 
 bootstrap();
 
-// ====== GATED ACCESS — Firebase Phone OTP ======
-// ─────────────────────────────────────────────────────────────────────────────
-// HOW TO ENABLE REAL SMS OTP  (free, ~5 min setup):
-//
-//  1. Go to → https://console.firebase.google.com/
-//  2. "Add project" → name it → Continue → Create project
-//  3. Gear ⚙️ → Project Settings → "Your apps" → </> (Web) → Register
-//  4. Copy the firebaseConfig snippet below and paste your real values
-//  5. In the console: Authentication → Sign-in method → Phone → Enable
-//  6. Authentication → Settings → Authorized domains → add your website URL
-//
-// Until you do the above, the gate runs in DEMO MODE:
-//   • The 6-digit OTP is printed to the browser DevTools console (F12)
-//   • Everything else (form, OTP boxes, resend, access grant) works normally
-// ─────────────────────────────────────────────────────────────────────────────
+// ====== GATED ACCESS v4 - Single Form + OTP ======
 const FIREBASE_CONFIG = {
-  apiKey:            "YOUR_API_KEY",
-  authDomain:        "YOUR_PROJECT.firebaseapp.com",
-  projectId:         "YOUR_PROJECT_ID",
-  storageBucket:     "YOUR_PROJECT_ID.appspot.com",
-  messagingSenderId: "YOUR_SENDER_ID",
-  appId:             "YOUR_APP_ID"
+  apiKey:            "AIzaSyCEGTasWzAeR3YsdAt-6PIecEHChlBWN6k",
+  authDomain:        "road-accident-intelligence.firebaseapp.com",
+  projectId:         "road-accident-intelligence",
+  storageBucket:     "road-accident-intelligence.firebasestorage.app",
+  messagingSenderId: "533811706169",
+  appId:             "1:533811706169:web:eefc1f314a91bcc5b190e8"
 };
-// ─────────────────────────────────────────────────────────────────────────────
+const IS_DEMO = FIREBASE_CONFIG.apiKey === 'YOUR_API_KEY';
 
 (function () {
-  const STORAGE_KEY = 'road_dash_access_v2';
-  const IS_DEMO     = FIREBASE_CONFIG.apiKey === 'YOUR_API_KEY';
+  const STORAGE_KEY = 'road_dash_access_v3';
+  let confirmResult = null, resendInterval = null;
 
-  let confirmResult = null;
-  let resendInterval = null;
-
-  const overlay    = document.getElementById('gate-overlay');
-  const step1El    = document.getElementById('gate-step1');
-  const step2El    = document.getElementById('gate-step2');
-  const sdot1      = document.getElementById('sdot1');
-  const sdot2      = document.getElementById('sdot2');
-  const sline      = document.getElementById('sline');
-  const form1      = document.getElementById('gate-form1');
-  const form2      = document.getElementById('gate-form2');
-  const err1       = document.getElementById('gate-err1');
-  const err2       = document.getElementById('gate-err2');
-  const sucBox     = document.getElementById('gate-suc');
-  const btn1       = document.getElementById('gate-submit1');
-  const btn2       = document.getElementById('gate-submit2');
-  const otpBoxes   = Array.from(document.querySelectorAll('.gate-otp-box'));
-  const phoneDisp  = document.getElementById('gate-phone-display');
-  const resendBtn  = document.getElementById('gate-resend-btn');
-  const resendNum  = document.getElementById('gate-resend-timer');
+  const overlay   = document.getElementById('gate-overlay');
+  const step1El   = document.getElementById('gate-step1');
+  const step2El   = document.getElementById('gate-step2');
+  const sdot1     = document.getElementById('sdot1');
+  const sdot2     = document.getElementById('sdot2');
+  const form1     = document.getElementById('gate-form1');
+  const form2     = document.getElementById('gate-form2');
+  const err1      = document.getElementById('gate-err1');
+  const err2      = document.getElementById('gate-err2');
+  const sucBox    = document.getElementById('gate-suc');
+  const btn1      = document.getElementById('gate-submit1');
+  const btn2      = document.getElementById('gate-submit2');
+  const otpBoxes  = Array.from(document.querySelectorAll('.gate-otp-box'));
+  const phoneDisp = document.getElementById('gate-phone-display');
+  const resendBtn = document.getElementById('gate-resend-btn');
+  const resendNum = document.getElementById('gate-resend-timer');
 
   const emailRe = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
-  function showE1(m) { err1.textContent = m; err1.classList.add('on'); }
-  function clrE1()   { err1.textContent = ''; err1.classList.remove('on'); }
-  function showE2(m) { err2.textContent = m; err2.classList.add('on'); }
-  function clrE2()   { err2.textContent = ''; err2.classList.remove('on'); }
-  function showSuc(m){ sucBox.textContent = m; sucBox.classList.add('on'); }
-  function setLoad(btn, on) { btn.disabled = on; btn.classList.toggle('loading', on); }
+  const showE1  = m => { err1.textContent = m; err1.classList.add('on'); };
+  const clrE1   = () => { err1.textContent = ''; err1.classList.remove('on'); };
+  const showE2  = m => { err2.textContent = m; err2.classList.add('on'); };
+  const clrE2   = () => { err2.textContent = ''; err2.classList.remove('on'); };
+  const showSuc = m => { sucBox.textContent = m; sucBox.classList.add('on'); };
+  const setLoad = (btn, on) => { btn.disabled = on; btn.classList.toggle('loading', on); };
 
   function checkAccess() {
     try {
       const s = JSON.parse(localStorage.getItem(STORAGE_KEY) || 'null');
-      if (s && s.verified && s.phone) { dismiss(); return true; }
+      if (s && s.verified) { dismissGate(); return true; }
     } catch(e) {}
     return false;
   }
 
-  function dismiss() {
-    overlay.style.transition = 'opacity .4s';
+  function dismissGate() {
+    overlay.style.transition = 'opacity .3s';
     overlay.style.opacity = '0';
-    setTimeout(() => { overlay.classList.add('hidden'); document.body.style.overflow = ''; }, 420);
+    setTimeout(() => { overlay.classList.add('hidden'); overlay.style.opacity=''; overlay.style.transition=''; document.body.style.overflow = ''; }, 320);
   }
 
   function grantAccess(data) {
     localStorage.setItem(STORAGE_KEY, JSON.stringify({ ...data, verified: true, ts: Date.now() }));
-    dismiss();
+    dismissGate();
+    setTimeout(function() {
+      if (typeof window._afterAuth === 'function') window._afterAuth();
+    }, 400);
   }
 
   function goToStep2(phone) {
     step1El.style.display = 'none';
     step2El.classList.add('active');
-    sdot1.classList.remove('active'); sdot1.classList.add('done'); sdot1.textContent = '✓';
-    sdot2.classList.add('active');
-    sline.classList.add('done');
+    if (sdot1) { sdot1.classList.remove('active'); sdot1.classList.add('done'); }
+    if (sdot2) sdot2.classList.add('active');
     phoneDisp.textContent = phone;
     otpBoxes[0].focus();
     startResendTimer();
   }
 
-  window.gateBackToStep1 = function () {
+  window.gateBackToStep1 = function() {
     step2El.classList.remove('active');
     step1El.style.display = '';
-    sdot1.classList.remove('done'); sdot1.classList.add('active'); sdot1.textContent = '1';
-    sdot2.classList.remove('active');
-    sline.classList.remove('done');
+    if (sdot1) { sdot1.classList.remove('done'); sdot1.classList.add('active'); }
+    if (sdot2) sdot2.classList.remove('active');
     clrE2(); sucBox.classList.remove('on');
     otpBoxes.forEach(b => { b.value = ''; b.classList.remove('filled', 'error'); });
     if (resendInterval) clearInterval(resendInterval);
   };
 
+  window.gateClose = function() {
+    overlay.classList.add('hidden');
+    document.body.style.overflow = '';
+    window._pendingTab = null;
+  };
+
   function startResendTimer() {
-    let s = 30;
-    resendBtn.disabled = true;
-    resendNum.textContent = s;
+    let s = 30; resendBtn.disabled = true; resendNum.textContent = s;
     if (resendInterval) clearInterval(resendInterval);
     resendInterval = setInterval(() => {
-      s--;
-      resendNum.textContent = s;
-      if (s <= 0) {
-        clearInterval(resendInterval);
-        resendBtn.disabled = false;
-        resendBtn.innerHTML = 'Resend OTP';
-      }
+      s--; resendNum.textContent = s;
+      if (s <= 0) { clearInterval(resendInterval); resendBtn.disabled = false; resendBtn.textContent = 'Resend OTP'; }
     }, 1000);
   }
 
+  // OTP box UX
   otpBoxes.forEach((box, i) => {
     box.addEventListener('input', () => {
       box.value = box.value.replace(/\D/g, '').slice(-1);
       box.classList.toggle('filled', !!box.value);
-      if (box.value && i < 5) otpBoxes[i + 1].focus();
+      if (box.value && i < otpBoxes.length - 1) otpBoxes[i + 1].focus();
     });
     box.addEventListener('keydown', e => {
       if (e.key === 'Backspace' && !box.value && i > 0) {
-        otpBoxes[i - 1].value = '';
-        otpBoxes[i - 1].classList.remove('filled');
-        otpBoxes[i - 1].focus();
+        otpBoxes[i-1].value = ''; otpBoxes[i-1].classList.remove('filled'); otpBoxes[i-1].focus();
       }
-      if (e.key === 'ArrowLeft'  && i > 0) otpBoxes[i - 1].focus();
-      if (e.key === 'ArrowRight' && i < 5) otpBoxes[i + 1].focus();
+      if (e.key === 'ArrowLeft'  && i > 0) otpBoxes[i-1].focus();
+      if (e.key === 'ArrowRight' && i < otpBoxes.length-1) otpBoxes[i+1].focus();
+    });
+    box.addEventListener('keydown', e2 => {
+      if (e2.key === 'Enter') { e2.preventDefault(); window.submitStep2(); }
     });
     box.addEventListener('paste', e => {
       const t = (e.clipboardData || window.clipboardData).getData('text').replace(/\D/g, '');
       if (t.length >= 6) {
         e.preventDefault();
-        t.slice(0, 6).split('').forEach((ch, idx) => {
-          otpBoxes[idx].value = ch;
-          otpBoxes[idx].classList.add('filled');
-        });
+        t.slice(0, 6).split('').forEach((ch, idx) => { otpBoxes[idx].value = ch; otpBoxes[idx].classList.add('filled'); });
         otpBoxes[5].focus();
       }
     });
   });
 
+  // Firebase
   let auth, recapVerifier;
   function initFirebase() {
     if (IS_DEMO) return;
     try {
       firebase.initializeApp(FIREBASE_CONFIG);
       auth = firebase.auth();
-      recapVerifier = new firebase.auth.RecaptchaVerifier('recaptcha-container', {
-        size: 'invisible', callback: () => {}
-      });
+      recapVerifier = new firebase.auth.RecaptchaVerifier('recaptcha-container', { size: 'invisible', callback: () => {} });
       recapVerifier.render();
-    } catch(e) { console.error('Firebase init error:', e); }
+    } catch(e) { console.error('Firebase init:', e); }
   }
 
-  form1.addEventListener('submit', async function (e) {
-    e.preventDefault();
+  // STEP 1 submit
+  window.submitStep1 = async function() {
     clrE1();
-
     const name  = document.getElementById('gate-name').value.trim();
     const email = document.getElementById('gate-email').value.trim();
     const cc    = document.getElementById('gate-cc').value;
-    const rawPh = document.getElementById('gate-phone').value.trim().replace(/\D/g, '');
+    const raw   = document.getElementById('gate-phone').value.trim().replace(/\D/g, '');
     const org   = document.getElementById('gate-org').value.trim();
-    const role  = document.getElementById('gate-role').value.trim();
+    const city  = document.getElementById('gate-city').value.trim();
 
-    const checks = [
-      ['gate-name',  !name],
-      ['gate-email', !email || !emailRe.test(email)],
-      ['gate-phone', !rawPh || rawPh.length < 7],
-      ['gate-org',   !org],
-    ];
-    let ok = true;
-    checks.forEach(([id, bad]) => {
-      document.getElementById(id).classList.toggle('error', bad);
-      if (bad) ok = false;
-    });
-    if (!ok) { showE1('Please fill in all required fields correctly.'); return; }
+    if (!name)  { document.getElementById('gate-name').classList.add('error');  showE1('Please enter your name.'); return; }
+    if (!email || !emailRe.test(email)) { document.getElementById('gate-email').classList.add('error'); showE1('Please enter a valid email.'); return; }
+    if (!raw || raw.length < 7) { document.getElementById('gate-phone').classList.add('error'); showE1('Please enter a valid phone number.'); return; }
+    ['gate-name','gate-email','gate-phone'].forEach(id => document.getElementById(id).classList.remove('error'));
 
-    const fullPhone = cc + rawPh;
+    const phone = cc + raw;
+    window._gData = { name, email, phone, org, city };
 
+    // DEMO MODE
     if (IS_DEMO) {
       const demo = Math.floor(100000 + Math.random() * 900000).toString();
       window._gDemo = demo;
-      window._gData = { name, email, phone: fullPhone, org, role };
-      console.log('%c🔐 DEMO OTP: ' + demo, 'font-size:24px;color:#ff8c00;font-weight:bold;background:#111;padding:6px 12px;border-radius:8px');
-      goToStep2(fullPhone);
+      console.log('%c OTP: ' + demo, 'font-size:22px;color:#e53935;font-weight:bold;background:#fff;padding:6px 14px;border-radius:8px;border:2px solid #e53935');
+      goToStep2(phone);
       return;
     }
 
     setLoad(btn1, true);
     try {
-      confirmResult = await firebase.auth().signInWithPhoneNumber(fullPhone, recapVerifier);
-      window._gData = { name, email, phone: fullPhone, org, role };
-      goToStep2(fullPhone);
-    } catch (err) {
-      console.error(err);
-      const msgs = {
-        'auth/invalid-phone-number': 'Invalid phone number — please check and try again.',
-        'auth/too-many-requests':    'Too many attempts. Please wait a moment.',
-        'auth/quota-exceeded':       'SMS quota exceeded. Try again later.',
-      };
+      confirmResult = await firebase.auth().signInWithPhoneNumber(phone, recapVerifier);
+      goToStep2(phone);
+    } catch(err) {
+      const msgs = { 'auth/invalid-phone-number': 'Invalid phone number.', 'auth/too-many-requests': 'Too many attempts. Please wait.' };
       showE1(msgs[err.code] || 'Could not send OTP. Please try again.');
       if (recapVerifier) recapVerifier.render();
     }
     setLoad(btn1, false);
-  });
+  };
 
-  form2.addEventListener('submit', async function (e) {
-    e.preventDefault();
+  // STEP 2 submit
+  window.submitStep2 = async function() {
     clrE2();
     const otp = otpBoxes.map(b => b.value).join('');
-
-    if (otp.length < 6) {
-      otpBoxes.forEach(b => b.classList.add('error'));
-      showE2('Please enter all 6 digits.');
-      return;
-    }
+    if (otp.length < 6) { otpBoxes.forEach(b => b.classList.add('error')); showE2('Please enter all 6 digits.'); return; }
     otpBoxes.forEach(b => b.classList.remove('error'));
 
     if (IS_DEMO) {
-      if (otp === window._gDemo) {
-        showSuc('✅ Verified! Opening dashboard…');
-        setTimeout(() => grantAccess(window._gData), 900);
-      } else {
-        otpBoxes.forEach(b => b.classList.add('error'));
-        showE2('Incorrect OTP. Check browser console (F12) for the demo code.');
-      }
+      if (otp === window._gDemo) { showSuc('Verified! Opening...'); setTimeout(() => grantAccess(window._gData), 800); }
+      else { otpBoxes.forEach(b => b.classList.add('error')); showE2('Incorrect OTP. Check browser console (F12).'); }
       return;
     }
 
-    if (!confirmResult) { showE2('Session expired. Go back and resend OTP.'); return; }
+    if (!confirmResult) { showE2('Session expired. Go back and resend.'); return; }
     setLoad(btn2, true);
     try {
       await confirmResult.confirm(otp);
-      showSuc('✅ Verified! Opening dashboard…');
-      setTimeout(() => grantAccess(window._gData), 900);
-    } catch (err) {
+      showSuc('Verified! Opening...');
+      setTimeout(() => grantAccess(window._gData), 800);
+    } catch(err) {
       otpBoxes.forEach(b => b.classList.add('error'));
-      const msgs = {
-        'auth/invalid-verification-code': 'Incorrect OTP. Please try again.',
-        'auth/code-expired':              'OTP expired. Go back and resend.',
-      };
-      showE2(msgs[err.code] || 'Verification failed. Please try again.');
+      showE2(err.code === 'auth/code-expired' ? 'OTP expired. Please resend.' : 'Incorrect OTP. Please try again.');
     }
     setLoad(btn2, false);
-  });
+  };
 
+  // Resend
   resendBtn.addEventListener('click', async () => {
     if (IS_DEMO) {
       const demo = Math.floor(100000 + Math.random() * 900000).toString();
       window._gDemo = demo;
-      console.log('%c🔐 NEW DEMO OTP: ' + demo, 'font-size:24px;color:#ff8c00;font-weight:bold;background:#111;padding:6px 12px;border-radius:8px');
-      startResendTimer();
-      return;
+      console.log('%c NEW OTP: ' + demo, 'font-size:22px;color:#e53935;font-weight:bold;background:#fff;padding:6px 14px;border-radius:8px;border:2px solid #e53935');
+      startResendTimer(); return;
     }
     resendBtn.disabled = true;
-    try {
-      confirmResult = await firebase.auth().signInWithPhoneNumber(window._gData.phone, recapVerifier);
-      startResendTimer();
-    } catch (err) {
-      resendBtn.disabled = false;
-      showE2('Could not resend. Please try again.');
-    }
+    try { confirmResult = await firebase.auth().signInWithPhoneNumber(window._gData.phone, recapVerifier); startResendTimer(); }
+    catch(err) { resendBtn.disabled = false; showE2('Could not resend. Please try again.'); }
   });
 
-  if (!checkAccess()) {
-    document.body.style.overflow = 'hidden';
-    initFirebase();
-  }
+  // Gate starts hidden - shown only on gated tab click
+  overlay.classList.add('hidden');
+  document.body.style.overflow = '';
+  if (!checkAccess()) initFirebase();
 })();
 
+// ====== PROFILE POPUP ======
+function showProfilePopup() {
+  const po = document.getElementById('profile-overlay');
+  if (po) { po.classList.remove('hidden'); }
+}
+
+function skipProfile() {
+  document.getElementById('profile-overlay').classList.add('hidden');
+}
+
+document.getElementById('profile-form').addEventListener('submit', function(e) {
+  e.preventDefault();
+  const profile = {
+    org:      document.getElementById('pf-org').value.trim(),
+    role:     document.getElementById('pf-role').value.trim(),
+    city:     document.getElementById('pf-city').value.trim(),
+    sector:   document.getElementById('pf-sector').value,
+    interest: document.getElementById('pf-interest').value,
+  };
+  // Merge into existing access record
+  try {
+    const STORAGE_KEY = 'road_dash_access_v3';
+    const saved = JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}');
+    localStorage.setItem(STORAGE_KEY, JSON.stringify({ ...saved, ...profile }));
+  } catch(e) {}
+  skipProfile();
+});
+
+// ====== TAB GATE LOGIC ======
+const GATED_TABS = ['state','city','compare','analytics','featured','reports'];
+let _pendingTab = null;
+
+function isAuthenticated() {
+  try {
+    const s = JSON.parse(localStorage.getItem('road_dash_access_v3') || 'null');
+    return !!(s && s.verified);
+  } catch(e) { return false; }
+}
+
+function showGate(pendingTab) {
+  _pendingTab = pendingTab;
+  const ov = document.getElementById('gate-overlay');
+  ov.classList.remove('hidden');
+  ov.style.opacity = '1';
+  ov.style.transition = 'none';
+  document.body.style.overflow = 'hidden';
+}
+
+window._afterAuth = function() {
+  document.body.style.overflow = '';
+  if (_pendingTab) {
+    const btn = document.querySelector('.tab[data-view="' + _pendingTab + '"]');
+    if (btn) btn.click();
+    _pendingTab = null;
+  }
+  document.querySelectorAll('.tab[data-gated]').forEach(t => t.removeAttribute('data-gated'));
+};
+
+function wireTabGate() {
+  if (window._tabGateWired) return;
+  window._tabGateWired = true;
+  document.querySelectorAll('.tab[data-view]').forEach(function(tab) {
+    const view = tab.dataset.view;
+    if (!GATED_TABS.includes(view)) return;
+    if (!isAuthenticated()) tab.setAttribute('data-gated', 'true');
+    const prev = tab.onclick;
+    tab.onclick = function(e) {
+      if (isAuthenticated()) { if (prev) prev.call(tab, e); return; }
+      e.stopImmediatePropagation();
+      showGate(view);
+    };
+  });
+}
+setTimeout(wireTabGate, 900);
 </script>
 
 </body>
